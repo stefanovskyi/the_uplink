@@ -17,14 +17,16 @@
 <body class="bg-scanline">
 
     <!-- A. Header & Status Bar -->
+    <div class="crt-overlay"></div>
+
     <header class="header-container">
         <div class="header-title">
             <h1>The_Uplink</h1>
-            <p>V.1.0 // INTRO_HELPER_UTILITY</p>
+            <div class="header-subtitle">v.1.0 // INTRO_HELPER_UTILITY</div>
         </div>
         <div class="header-status" x-data="statusModule">
-            <p>DETECTED: <span x-text="userLocation">DETECTING...</span></p>
-            <p>STATUS: <span class="status-online">ONLINE</span></p>
+            <div>DETECTED: <span x-text="userLocation">DETECTING...</span></div>
+            <div>STATUS: <span class="status-online">ONLINE</span></div>
         </div>
     </header>
 
@@ -150,7 +152,7 @@
     <div class="dual-module-row">
         <!-- D. Thermo_Bridge (Converter) -->
         <section class="thermo-bridge" x-data="thermoBridge">
-            <h2 class="section-title">Thermo_Bridge</h2>
+            <div class="module-header">THERMO_BRIDGE </div>
             <div class="converter-inputs">
                 <div class="input-group">
                     <label>°F</label>
@@ -168,14 +170,17 @@
 
         <!-- E. Silence_Killer_V2 -->
         <section class="silence-killer" x-data="silenceKiller">
-            <div class="silence-header">
-                <h2 class="section-title-inline">Silence_Killer_V2</h2>
-                <div class="mode-toggles">
+            <div class="module-header">
+                <span>SILENCE_KILLER_V2</span>
+                <div class="mode-toggles-inline">
                     <button @click="mode = 'icebreaker'" :class="{'active': mode === 'icebreaker'}">ICEBREAKER</button>
+                    <span>/</span>
                     <button @click="mode = 'trivia'" :class="{'active': mode === 'trivia'}">TRIVIA</button>
                 </div>
             </div>
             <div class="display-area">
+                <div x-show="mode === 'icebreaker'" class="mode-badge">ICEBREAKER</div>
+                <div x-show="mode === 'trivia'" class="mode-badge">TRIVIA</div>
                 <span x-text="currentText" class="typewriter"></span>
             </div>
             <button @click="generate" class="generate-btn">
@@ -186,7 +191,7 @@
 
     <!-- F. Overlap_Visualizer -->
     <section class="overlap-visualizer" x-data="overlapVisualizer">
-        <h2 class="section-title">Overlap_Visualizer // THE_GOLDEN_HOUR</h2>
+        <div class="module-header">OVERLAP_VISUALIZER</div>
         
         <!-- Gantt Chart -->
         <div class="gantt-container">
