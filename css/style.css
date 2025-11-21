@@ -434,6 +434,45 @@ body {
     border-color: black;
 }
 
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.weather-icon-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.weather-icon-large svg {
+    width: 3.5rem;
+    height: 3.5rem;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+.weather-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.weather-desc {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+}
+
+.weather-temp {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 .optimal-window {
     color: #dc2626; /* Red-600 */
     font-weight: bold;

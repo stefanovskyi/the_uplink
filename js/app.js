@@ -58,6 +58,7 @@ document.addEventListener("alpine:init", () => {
     time: "00:00:00",
     date: "---, --- --",
     weatherDesc: "LOADING...",
+    weatherIcon: "",
     temp: "--",
     unit: "°C",
     isUser: false,
@@ -128,26 +129,40 @@ document.addEventListener("alpine:init", () => {
     },
 
     updateWeatherDesc(code) {
+      // Brutalist SVG Icons (Thick strokes, monochrome)
+      const icons = {
+        sun: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>`,
+        cloud: `<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`,
+        partlyCloudy: `<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path><circle cx="18" cy="5" r="3"></circle></svg>`,
+        fog: `<svg viewBox="0 0 24 24"><path d="M4 15h16M4 10h16M4 20h16M4 5h16"></path></svg>`,
+        rain: `<svg viewBox="0 0 24 24"><path d="M16 13v8M8 13v8M12 15v8M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`,
+        snow: `<svg viewBox="0 0 24 24"><path d="M8 15l2 2m0-2l-2 2m8-2l2 2m0-2l-2 2m-6-8l2 2m0-2l-2 2m8-2l2 2m0-2l-2 2"></path><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`,
+        thunder: `<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>`,
+        unknown: `<svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`
+      };
+
       // Simple WMO code mapping
       const codes = {
-        0: "CLEAR SKY",
-        1: "MAINLY CLEAR",
-        2: "PARTLY CLOUDY",
-        3: "OVERCAST",
-        45: "FOG",
-        48: "FOG",
-        51: "DRIZZLE",
-        53: "DRIZZLE",
-        55: "DRIZZLE",
-        61: "RAIN",
-        63: "RAIN",
-        65: "HEAVY RAIN",
-        71: "SNOW",
-        73: "SNOW",
-        75: "HEAVY SNOW",
-        95: "THUNDERSTORM",
+        0: { desc: "CLEAR SKY", icon: icons.sun },
+        1: { desc: "MAINLY CLEAR", icon: icons.partlyCloudy },
+        2: { desc: "PARTLY CLOUDY", icon: icons.partlyCloudy },
+        3: { desc: "OVERCAST", icon: icons.cloud },
+        45: { desc: "FOG", icon: icons.fog },
+        48: { desc: "FOG", icon: icons.fog },
+        51: { desc: "DRIZZLE", icon: icons.rain },
+        53: { desc: "DRIZZLE", icon: icons.rain },
+        55: { desc: "DRIZZLE", icon: icons.rain },
+        61: { desc: "RAIN", icon: icons.rain },
+        63: { desc: "RAIN", icon: icons.rain },
+        65: { desc: "HEAVY RAIN", icon: icons.rain },
+        71: { desc: "SNOW", icon: icons.snow },
+        73: { desc: "SNOW", icon: icons.snow },
+        75: { desc: "HEAVY SNOW", icon: icons.snow },
+        95: { desc: "THUNDERSTORM", icon: icons.thunder },
       };
-      this.weatherDesc = codes[code] || "UNKNOWN";
+      const weather = codes[code] || { desc: "UNKNOWN", icon: icons.unknown };
+      this.weatherDesc = weather.desc;
+      this.weatherIcon = weather.icon;
     },
 
     updateTempDisplay(unit) {
