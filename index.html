@@ -181,7 +181,7 @@
             <div class="gantt-chart">
                 <!-- X-Axis -->
                 <div class="gantt-row header-row">
-                    <div class="row-label">UTC</div>
+                    <div class="row-label" x-text="userTimeZone">UTC</div>
                     <template x-for="h in 24">
                         <div class="hour-cell" x-text="h-1"></div>
                     </template>

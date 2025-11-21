@@ -424,6 +424,16 @@ body {
     border-color: black;
 }
 
+.hour-cell.current {
+    background-color: var(--c-accent-yellow);
+    border-color: black;
+}
+
+.hour-cell.current-light {
+    background-color: #fdf6b0; /* Light Yellow */
+    border-color: black;
+}
+
 .optimal-window {
     color: #dc2626; /* Red-600 */
     font-weight: bold;

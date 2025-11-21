@@ -224,7 +224,7 @@ document.addEventListener("alpine:init", () => {
         this.mode === "icebreaker" ? this.icebreakers : this.trivia;
       const random = source[Math.floor(Math.random() * source.length)];
       this.currentText = random;
-    },
+    }
   }));
 
   // F. Overlap Visualizer Module
@@ -236,91 +236,107 @@ document.addEventListener("alpine:init", () => {
       { name: "LVI (EET)", offset: 2 },
     ],
     optimalWindow: "CALCULATING...",
+    currentUserHour: null,
+    userTimeZone: 'UTC',
+    userUtcOffset: 0,
 
     init() {
+      this.detectUserTimezone();
+      this.updateCurrentTime();
+      setInterval(() => this.updateCurrentTime(), 60000); // Update every minute
       this.calculateWindow();
     },
 
-    isWorkingHour(offset, utcHour) {
-      // Local time = UTC + offset
-      let localHour = utcHour + offset;
-      if (localHour < 0) localHour += 24;
-      if (localHour >= 24) localHour -= 24;
-
-      return localHour >= 9 && localHour < 18;
+    detectUserTimezone() {
+        const now = luxon.DateTime.now();
+        this.userTimeZone = now.toFormat('ZZZ'); // e.g. CET, EST
+        this.userUtcOffset = now.offset / 60; // Offset in hours (e.g. 1 for CET)
     },
 
-    getHourStatus(offset, utcHour) {
-      let localHour = utcHour + offset;
-      if (localHour < 0) localHour += 24;
-      if (localHour >= 24) localHour -= 24;
+    updateCurrentTime() {
+      this.currentUserHour = new Date().getHours();
+    },
 
-      if (localHour >= 9 && localHour < 18) return 'working';
-      if (localHour === 8 || localHour === 18) return 'shoulder';
+    // h is the hour on the X-axis (User's Local Time 0-23)
+    getCityHour(userHour, cityUtcOffset) {
+        // CityTime = UserTime - UserOffset + CityOffset
+        let cityHour = userHour - this.userUtcOffset + cityUtcOffset;
+        
+        // Normalize to 0-23
+        while (cityHour < 0) cityHour += 24;
+        while (cityHour >= 24) cityHour -= 24;
+        
+        return Math.floor(cityHour);
+    },
+
+    getHourStatus(cityUtcOffset, axisHour) {
+      // axisHour is the column index (0-23), representing User's Local Hour
+      
+      // Check if this column is the current hour for the user
+      if (axisHour === this.currentUserHour) {
+          // We need to check if the CITY is in working hours at this time
+          const cityHour = this.getCityHour(axisHour, cityUtcOffset);
+          if (cityHour >= 8 && cityHour <= 18) {
+              return 'current';
+          } else {
+              return 'current-light';
+          }
+      }
+
+      const cityHour = this.getCityHour(axisHour, cityUtcOffset);
+
+      if (cityHour >= 9 && cityHour < 18) return 'working';
+      if (cityHour === 8 || cityHour === 18) return 'shoulder';
       return 'off';
     },
 
     calculateWindow() {
-      // Find UTC hours where ALL cities are working (or max overlap)
-      // This is tricky because with -8 and +2, there might be NO full overlap.
-      // The prompt asks to "Highlight the block green if the local time is 09:00 - 18:00".
-      // And "OPTIMAL WINDOW: [Start] - [End] UTC".
-
-      // Let's find the intersection of working hours in UTC.
-      // LAX (UTC-8): 09:00-18:00 Local => 17:00-02:00 UTC
-      // NYC (UTC-5): 09:00-18:00 Local => 14:00-23:00 UTC
-      // WRO (UTC+1): 09:00-18:00 Local => 08:00-17:00 UTC
-      // LVI (UTC+2): 09:00-18:00 Local => 07:00-16:00 UTC
-
-      // Intersection:
-      // LAX starts 17:00 UTC.
-      // LVI ends 16:00 UTC.
-      // There is NO overlap between LAX and LVI.
-
-      // So we should probably just display the range for the user's local time or just static text if no overlap.
-      // However, the prompt says "OPTIMAL WINDOW: [Start] - [End] UTC".
-      // If no overlap, maybe show the best partial?
-      // Or maybe I should just calculate it for the "Golden Hour" concept which usually implies the short window.
-
-      // Let's just hardcode a logic to find the hour with MOST overlap.
-
+      // We still want to find the optimal window in UTC, as per original requirement?
+      // "Update the UTC row to show the user's current timezone."
+      // The calculation logic for "Optimal Window" shouldn't necessarily change its output format (UTC),
+      // but the visualization is now relative to User.
+      
+      // Let's keep the calculation in UTC for consistency with the text output.
+      
       let maxOverlap = 0;
-      let bestStart = 0;
-      let bestEnd = 0;
+      let bestStartUtc = 0;
 
-      // Simple sweep
       const overlapCounts = new Array(24).fill(0);
-      for (let h = 0; h < 24; h++) {
+      
+      // Iterate through UTC hours 0-23
+      for (let utcH = 0; utcH < 24; utcH++) {
         let count = 0;
         this.cities.forEach((c) => {
-          if (this.isWorkingHour(c.offset, h)) count++;
+            // Check if this UTC hour is working for the city
+            let cityH = utcH + c.offset;
+            while (cityH < 0) cityH += 24;
+            while (cityH >= 24) cityH -= 24;
+            
+            if (cityH >= 9 && cityH < 18) count++;
         });
-        overlapCounts[h] = count;
+        overlapCounts[utcH] = count;
       }
 
-      // Find sequence of max overlap
-      // For now, let's just pick the first hour with max overlap
       maxOverlap = Math.max(...overlapCounts);
-      const start = overlapCounts.indexOf(maxOverlap);
+      bestStartUtc = overlapCounts.indexOf(maxOverlap);
 
-            // Format
-            this.optimalWindow = `${start}:00 - ${start+1}:00 UTC`;
-            
-            // Add local times for EST and CET
-            // EST is UTC-5, CET is UTC+1
-            const estStart = start - 5;
-            const estEnd = start + 1 - 5;
-            const cetStart = start + 1;
-            const cetEnd = start + 1 + 1;
-            
-            const formatHour = (h) => {
-                let hour = h;
-                if (hour < 0) hour += 24;
-                if (hour >= 24) hour -= 24;
-                return hour;
-            };
-            
-            this.optimalWindow += ` (${formatHour(estStart)}:00 - ${formatHour(estEnd)}:00 EST / ${formatHour(cetStart)}:00 - ${formatHour(cetEnd)}:00 CET)`;
+      // Format
+      this.optimalWindow = `${bestStartUtc}:00 - ${bestStartUtc+1}:00 UTC`;
+      
+      // Add local times for EST and CET
+      const estStart = bestStartUtc - 5;
+      const estEnd = bestStartUtc + 1 - 5;
+      const cetStart = bestStartUtc + 1;
+      const cetEnd = bestStartUtc + 1 + 1;
+      
+      const formatHour = (h) => {
+          let hour = h;
+          while (hour < 0) hour += 24;
+          while (hour >= 24) hour -= 24;
+          return hour;
+      };
+      
+      this.optimalWindow += ` (${formatHour(estStart)}:00 - ${formatHour(estEnd)}:00 EST / ${formatHour(cetStart)}:00 - ${formatHour(cetEnd)}:00 CET)`;
     },
   }));
 });
