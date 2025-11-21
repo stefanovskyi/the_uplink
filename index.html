@@ -149,6 +149,30 @@
         </article>
     </main>
 
+    <!-- G. Upcoming Holidays -->
+    <section class="upcoming-holidays" x-data="holidayModule">
+        <div class="module-header">UPCOMING_HOLIDAYS // NEXT_60_DAYS</div>
+        
+        <div x-show="loading" class="status-message">LOADING_DATA...</div>
+        <div x-show="error" class="status-message error">ERROR_FETCHING_DATA</div>
+        
+        <div class="holidays-grid" x-show="!loading && !error">
+            <template x-for="holiday in holidays" :key="holiday.key">
+                <div class="holiday-card">
+                    <div class="holiday-date" x-text="holiday.dateFormatted"></div>
+                    <div class="holiday-info">
+                        <div class="holiday-name" x-text="holiday.name"></div>
+                        <div class="holiday-meta">
+                            <span class="country-badge" :class="holiday.countryCode" x-text="holiday.countryCode"></span>
+                            <span class="holiday-local" x-text="holiday.localName"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <div x-show="holidays.length === 0 && !loading" class="status-message">NO_HOLIDAYS_DETECTED</div>
+        </div>
+    </section>
+
     <div class="dual-module-row">
         <!-- D. Thermo_Bridge (Converter) -->
         <section class="thermo-bridge" x-data="thermoBridge">
@@ -222,6 +246,7 @@
             OPTIMAL WINDOW: <span x-text="optimalWindow">CALCULATING...</span>
         </div>
     </section>
+
 
     <script src="js/app.js"></script>
 </body>

@@ -375,4 +375,77 @@ document.addEventListener("alpine:init", () => {
       this.optimalWindow += ` (${formatHour(estStart)}:00 - ${formatHour(estEnd)}:00 EST / ${formatHour(cetStart)}:00 - ${formatHour(cetEnd)}:00 CET)`;
     },
   }));
+
+  // G. Upcoming Holidays Module
+  Alpine.data("holidayModule", () => ({
+    holidays: [],
+    loading: true,
+    error: false,
+
+    init() {
+      this.fetchHolidays();
+    },
+
+    async fetchHolidays() {
+      try {
+        const now = luxon.DateTime.now();
+        const endDate = now.plus({ days: 60 });
+        const currentYear = now.year;
+        const nextYear = endDate.year;
+        
+        const countries = ['US', 'UA', 'PL'];
+        const years = [currentYear];
+        if (nextYear !== currentYear) {
+            years.push(nextYear);
+        }
+
+        let allHolidays = [];
+
+        // Fetch for all countries and relevant years
+        const promises = [];
+        for (const country of countries) {
+            for (const year of years) {
+                promises.push(
+                    fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/${country}`)
+                        .then(res => {
+                            if (!res.ok) throw new Error(`Failed to fetch ${country} ${year}`);
+                            return res.json();
+                        })
+                        .then(data => data.map(h => ({ ...h, countryCode: country })))
+                );
+            }
+        }
+
+        const results = await Promise.all(promises);
+        results.forEach(countryHolidays => {
+            allHolidays = allHolidays.concat(countryHolidays);
+        });
+
+        // Filter and Sort
+        this.holidays = allHolidays
+            .filter(h => {
+                const hDate = luxon.DateTime.fromISO(h.date);
+                return hDate >= now.startOf('day') && hDate <= endDate.endOf('day');
+            })
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .slice(0, 5) // Limit to 5 items
+            .map((h, index) => {
+                const hDate = luxon.DateTime.fromISO(h.date);
+                return {
+                    key: `${h.countryCode}-${h.date}-${index}`,
+                    dateFormatted: hDate.toFormat("MMM dd").toUpperCase(),
+                    name: h.name,
+                    localName: h.localName,
+                    countryCode: h.countryCode
+                };
+            });
+
+        this.loading = false;
+      } catch (e) {
+        console.error("Holiday Fetch Error:", e);
+        this.error = true;
+        this.loading = false;
+      }
+    }
+  }));
 });
