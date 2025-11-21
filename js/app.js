@@ -31,21 +31,19 @@ document.addEventListener("alpine:init", () => {
     },
     async fetchRates() {
       try {
-        // Fetch USD -> PLN, UAH
-        const res1 = await fetch(
-          "https://api.frankfurter.app/latest?from=USD&to=PLN,UAH"
-        );
-        const data1 = await res1.json();
+        // Fetch USD base rates (includes PLN, UAH, EUR)
+        // Using open.er-api.com as it supports UAH (Frankfurter does not)
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await res.json();
 
-        // Fetch EUR -> USD
-        const res2 = await fetch(
-          "https://api.frankfurter.app/latest?from=EUR&to=USD"
-        );
-        const data2 = await res2.json();
+        if (data.result !== "success") throw new Error("API Error");
 
-        const usdPln = data1.rates.PLN.toFixed(2);
-        const usdUah = data1.rates.UAH.toFixed(2);
-        const eurUsd = data2.rates.USD.toFixed(2);
+        const usdPln = data.rates.PLN.toFixed(2);
+        const usdUah = data.rates.UAH.toFixed(2);
+        
+        // Calculate EUR -> USD using the USD -> EUR rate
+        // 1 EUR = 1 / (USD -> EUR) USD
+        const eurUsd = (1 / data.rates.EUR).toFixed(2);
 
         this.tickerText = `$$$ MARKET_DATA // 1 USD = [${usdPln}] PLN // 1 USD = [${usdUah}] UAH // 1 EUR = [${eurUsd}] USD`;
       } catch (e) {
