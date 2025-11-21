@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_Uplink // V.1.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+</head>
+<body class="bg-scanline">
+
+    <!-- A. Header & Status Bar -->
+    <header class="header-container">
+        <div class="header-title">
+            <h1>The_Uplink</h1>
+            <p>V.1.0 // INTRO_HELPER_UTILITY</p>
+        </div>
+        <div class="header-status" x-data="statusModule">
+            <p>DETECTED: <span x-text="userLocation">DETECTING...</span></p>
+            <p>STATUS: <span class="status-online">ONLINE</span></p>
+        </div>
+    </header>
+
+    <!-- B. Market Data Ticker -->
+    <div class="ticker-container" x-data="tickerModule">
+        <div class="ticker-content" x-text="tickerText">
+            $$$ MARKET_DATA // LOADING...
+        </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <main class="main-grid">
+        <!-- C. Timezone Grid (4 Cards) -->
+        <!-- LAX -->
+        <article class="card" x-data="timezoneCard('America/Los_Angeles', 'LAX', 'PST')">
+            <div class="card-header">
+                <span class="city-code">Los Angeles</span>
+                <span class="timezone-tag">PST</span>
+            </div>
+            <div class="card-body">
+                <div class="time-display" x-text="time">00:00:00</div>
+                <div class="date-display" x-text="date">---, --- --</div>
+            </div>
+            <div class="card-footer">
+                <div class="weather-info">
+                    <div x-text="weatherDesc">---</div>
+                    <div><span x-text="temp">--</span><span x-text="unit">°C</span></div>
+                </div>
+                <button class="sound-btn" title="Play Sound" @click="playBeep">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.426-1.582 1.072-2.106.332-.25.65-.482.955-.694a8.75 8.75 0 011.325-.762c.42-.198.873-.33 1.34-.388V8.25z" />
+                    </svg>
+                </button>
+            </div>
+            <div x-show="isUser" class="you-badge">YOU</div>
+        </article>
+
+        <!-- NYC -->
+        <article class="card" x-data="timezoneCard('America/New_York', 'NYC', 'EST')">
+            <div class="card-header">
+                <span class="city-code">New York</span>
+                <span class="timezone-tag">EST</span>
+            </div>
+            <div class="card-body">
+                <div class="time-display" x-text="time">00:00:00</div>
+                <div class="date-display" x-text="date">---, --- --</div>
+            </div>
+            <div class="card-footer">
+                <div class="weather-info">
+                    <div x-text="weatherDesc">---</div>
+                    <div><span x-text="temp">--</span><span x-text="unit">°C</span></div>
+                </div>
+                <button class="sound-btn" title="Play Sound" @click="playBeep">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.426-1.582 1.072-2.106.332-.25.65-.482.955-.694a8.75 8.75 0 011.325-.762c.42-.198.873-.33 1.34-.388V8.25z" />
+                    </svg>
+                </button>
+            </div>
+            <div x-show="isUser" class="you-badge">YOU</div>
+        </article>
+
+        <!-- WRO -->
+        <article class="card" x-data="timezoneCard('Europe/Warsaw', 'WRO', 'CET')">
+            <div class="card-header">
+                <span class="city-code">Wroclaw</span>
+                <span class="timezone-tag">CET</span>
+            </div>
+            <div class="card-body">
+                <div class="time-display" x-text="time">00:00:00</div>
+                <div class="date-display" x-text="date">---, --- --</div>
+            </div>
+            <div class="card-footer">
+                <div class="weather-info">
+                    <div x-text="weatherDesc">---</div>
+                    <div><span x-text="temp">--</span><span x-text="unit">°C</span></div>
+                </div>
+                <button class="sound-btn" title="Play Sound" @click="playBeep">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.426-1.582 1.072-2.106.332-.25.65-.482.955-.694a8.75 8.75 0 011.325-.762c.42-.198.873-.33 1.34-.388V8.25z" />
+                    </svg>
+                </button>
+            </div>
+            <div x-show="isUser" class="you-badge">YOU</div>
+        </article>
+
+        <!-- LVI -->
+        <article class="card" x-data="timezoneCard('Europe/Kyiv', 'LVI', 'EET')">
+            <div class="card-header">
+                <span class="city-code">Lviv</span>
+                <span class="timezone-tag">EET</span>
+            </div>
+            <div class="card-body">
+                <div class="time-display" x-text="time">00:00:00</div>
+                <div class="date-display" x-text="date">---, --- --</div>
+            </div>
+            <div class="card-footer">
+                <div class="weather-info">
+                    <div x-text="weatherDesc">---</div>
+                    <div><span x-text="temp">--</span><span x-text="unit">°C</span></div>
+                </div>
+                <button class="sound-btn" title="Play Sound" @click="playBeep">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.426-1.582 1.072-2.106.332-.25.65-.482.955-.694a8.75 8.75 0 011.325-.762c.42-.198.873-.33 1.34-.388V8.25z" />
+                    </svg>
+                </button>
+            </div>
+            <div x-show="isUser" class="you-badge">YOU</div>
+        </article>
+    </main>
+
+    <div class="dual-module-row">
+        <!-- D. Thermo_Bridge (Converter) -->
+        <section class="thermo-bridge" x-data="thermoBridge">
+            <h2 class="section-title">Thermo_Bridge</h2>
+            <div class="converter-inputs">
+                <div class="input-group">
+                    <label>°F</label>
+                    <input type="number" x-model="fahrenheit" @input="updateFromF">
+                </div>
+                <div class="input-group">
+                    <label>°C</label>
+                    <input type="number" x-model="celsius" @input="updateFromC">
+                </div>
+            </div>
+            <button @click="toggleGlobalUnit" class="toggle-btn">
+                Toggle Global View (C/F)
+            </button>
+        </section>
+
+        <!-- E. Silence_Killer_V2 -->
+        <section class="silence-killer" x-data="silenceKiller">
+            <div class="silence-header">
+                <h2 class="section-title-inline">Silence_Killer_V2</h2>
+                <div class="mode-toggles">
+                    <button @click="mode = 'icebreaker'" :class="{'active': mode === 'icebreaker'}">ICEBREAKER</button>
+                    <button @click="mode = 'trivia'" :class="{'active': mode === 'trivia'}">TRIVIA</button>
+                </div>
+            </div>
+            <div class="display-area">
+                <span x-text="currentText" class="typewriter"></span>
+            </div>
+            <button @click="generate" class="generate-btn">
+                GENERATE_NEXT_PACKET >>
+            </button>
+        </section>
+    </div>
+
+    <!-- F. Overlap_Visualizer -->
+    <section class="overlap-visualizer" x-data="overlapVisualizer">
+        <h2 class="section-title">Overlap_Visualizer // THE_GOLDEN_HOUR</h2>
+        
+        <!-- Gantt Chart -->
+        <div class="gantt-container">
+            <div class="gantt-chart">
+                <!-- X-Axis -->
+                <div class="gantt-row header-row">
+                    <div class="row-label">UTC</div>
+                    <template x-for="h in 24">
+                        <div class="hour-cell" x-text="h-1"></div>
+                    </template>
+                </div>
+
+                <!-- Rows -->
+                <template x-for="city in cities">
+                    <div class="gantt-row">
+                        <div class="row-label" x-text="city.name"></div>
+                        <template x-for="h in 24">
+                            <div class="hour-cell" 
+                                 :class="getHourStatus(city.offset, h-1)">
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div class="optimal-window">
+            OPTIMAL WINDOW: <span x-text="optimalWindow">CALCULATING...</span>
+        </div>
+    </section>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
