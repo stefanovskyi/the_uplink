@@ -174,22 +174,59 @@
     </section>
 
     <div class="dual-module-row">
-        <!-- D. Thermo_Bridge (Converter) -->
-        <section class="thermo-bridge" x-data="thermoBridge">
-            <div class="module-header">THERMO_BRIDGE </div>
-            <div class="converter-inputs">
-                <div class="input-group">
-                    <label>°F</label>
-                    <input type="number" x-model="fahrenheit" @input="updateFromF">
-                </div>
-                <div class="input-group">
-                    <label>°C</label>
-                    <input type="number" x-model="celsius" @input="updateFromC">
+        <!-- D. Converter -->
+        <section class="thermo-bridge" x-data="converterModule">
+            <div class="module-header">
+                <span>CONVERTER</span>
+                <button @click="toggleGlobalUnit" class="header-toggle-btn">
+                    C/F
+                </button>
+            </div>
+            
+            <!-- Temperature -->
+            <div class="converter-section">
+                <div class="section-label">TEMPERATURE</div>
+                <div class="temp-row">
+                    <div class="input-group compact">
+                        <label>°F</label>
+                        <input type="number" x-model="fahrenheit" @input="updateFromF">
+                    </div>
+                    <div class="input-group compact">
+                        <label>°C</label>
+                        <input type="number" x-model="celsius" @input="updateFromC">
+                    </div>
                 </div>
             </div>
-            <button @click="toggleGlobalUnit" class="toggle-btn">
-                Toggle Global View (C/F)
-            </button>
+
+            <!-- Weight -->
+            <div class="converter-section">
+                <div class="section-label">WEIGHT</div>
+                <div class="converter-inputs-row">
+                    <div class="input-group">
+                        <label>LBS</label>
+                        <input type="number" x-model="lbs" @input="updateFromLbs">
+                    </div>
+                    <div class="input-group">
+                        <label>KG</label>
+                        <input type="number" x-model="kg" @input="updateFromKg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Length -->
+            <div class="converter-section">
+                <div class="section-label">LENGTH</div>
+                <div class="converter-inputs-row">
+                    <div class="input-group">
+                        <label>FT/IN</label>
+                        <input type="text" x-model="imperial" @input="updateFromImperial" placeholder="5' 10&quot;">
+                    </div>
+                    <div class="input-group">
+                        <label>M</label>
+                        <input type="number" step="0.01" x-model="m" @input="updateFromMetric">
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- E. Silence_Killer_V2 -->

@@ -221,7 +221,7 @@ body {
     }
 }
 
-/* Thermo Bridge */
+/* Converter */
 .thermo-bridge {
     background: var(--c-card);
     border: var(--border-thick);
@@ -231,21 +231,34 @@ body {
     flex: 0.5;
 }
 
-.section-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    border-bottom: 2px solid black;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    margin-top: 0;
+.converter-section {
+    margin-bottom: 1.5rem;
+    /* border-bottom removed as per request */
+    padding-bottom: 0;
 }
 
-.converter-inputs {
+.converter-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-label {
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+}
+
+.temp-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.converter-inputs-row {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .input-group {
@@ -253,12 +266,19 @@ body {
     align-items: center;
     border: 2px solid black;
     padding: 0.5rem;
+    background: white;
+}
+
+.input-group.compact {
+    padding: 0.25rem 0.5rem;
+    flex: 1;
 }
 
 .input-group label {
-    width: 3rem;
+    width: auto;
+    margin-right: 0.5rem;
     font-weight: bold;
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 
 .input-group input {
@@ -267,26 +287,25 @@ body {
     border: none;
     outline: none;
     font-weight: bold;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-family: var(--font-main);
+    min-width: 0; /* Prevent overflow */
 }
 
-.toggle-btn {
-    width: 100%;
-    background: black;
-    color: white;
+.header-toggle-btn {
+    background: white;
+    color: black;
     font-weight: bold;
-    padding: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
     cursor: pointer;
-    border: none;
+    border: none; /* Or 1px solid black if preferred, user said "white with black text" */
     font-family: var(--font-main);
-    transition: background-color 0.2s;
+    margin-left: auto; /* Push to right if flex container allows */
 }
 
-.toggle-btn:hover {
-    background: #333;
+.header-toggle-btn:hover {
+    background: #f0f0f0;
 }
 
 /* Silence Killer */

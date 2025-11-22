@@ -197,11 +197,21 @@ document.addEventListener("alpine:init", () => {
     },
   }));
 
-  // D. Thermo Bridge Module
-  Alpine.data("thermoBridge", () => ({
+  // D. Converter Module
+  Alpine.data("converterModule", () => ({
+    // Temperature
     celsius: 0,
     fahrenheit: 32,
 
+    // Weight
+    lbs: 0,
+    kg: 0,
+
+    // Length
+    m: 0,
+    imperial: "0' 0\"",
+
+    // Temperature Logic
     updateFromC() {
       this.fahrenheit = ((this.celsius * 9) / 5 + 32).toFixed(1);
     },
@@ -211,6 +221,43 @@ document.addEventListener("alpine:init", () => {
     toggleGlobalUnit() {
       Alpine.store("global").toggleUnit();
     },
+
+    // Weight Logic
+    updateFromLbs() {
+      this.kg = (this.lbs * 0.453592).toFixed(2);
+    },
+    updateFromKg() {
+      this.lbs = (this.kg * 2.20462).toFixed(2);
+    },
+
+    // Length Logic
+    updateFromMetric() {
+      const meters = parseFloat(this.m || 0);
+      const totalInches = meters * 39.3701;
+      const feet = Math.floor(totalInches / 12);
+      const inches = Math.round(totalInches % 12);
+      this.imperial = `${feet}' ${inches}"`;
+    },
+    updateFromImperial() {
+      // Parse string like 5' 10" or 5 10 or 5'10
+      const str = this.imperial;
+      let feet = 0, inches = 0;
+
+      // Try to match standard format
+      const match = str.match(/(\d+)'\s*(\d+)?/);
+      if (match) {
+        feet = parseInt(match[1]) || 0;
+        inches = parseInt(match[2]) || 0;
+      } else {
+        // Fallback: try to parse just space separated
+        const parts = str.trim().split(/\s+/);
+        if (parts.length > 0) feet = parseInt(parts[0]) || 0;
+        if (parts.length > 1) inches = parseInt(parts[1]) || 0;
+      }
+
+      const totalInches = (feet * 12) + inches;
+      this.m = (totalInches / 39.3701).toFixed(2);
+    }
   }));
 
   // E. Silence Killer Module
