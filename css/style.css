@@ -127,7 +127,7 @@ body {
     box-shadow: var(--shadow-hard);
     padding: 1rem;
     position: relative;
-    min-height: 200px;
+    min-height: 140px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -137,7 +137,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .city-code {
@@ -432,7 +432,7 @@ body {
 
 .gantt-container {
     overflow-x: auto;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 .gantt-chart {
