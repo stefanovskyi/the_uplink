@@ -217,7 +217,7 @@ body {
 @media (min-width: 1024px) {
     .dual-module-row {
         flex-direction: row;
-        align-items: flex-start;
+        /* align-items: flex-start; Removed to allow stretch */
     }
 }
 

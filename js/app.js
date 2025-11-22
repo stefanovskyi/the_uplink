@@ -263,7 +263,10 @@ document.addEventListener("alpine:init", () => {
   // E. Silence Killer Module
   Alpine.data("silenceKiller", () => ({
     mode: "trivia",
-    currentText: "READY TO GENERATE...",
+    currentText: "",
+    init() {
+      this.generate();
+    },
     icebreakers: [
       "What is the weirdest snack you have on your desk right now?",
       "Show us your coffee mug. Is there a story behind it, or was it just the clean one?",
