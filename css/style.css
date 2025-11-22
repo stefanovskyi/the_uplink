@@ -894,3 +894,45 @@ body {
     z-index: 1;
     transition: width 0.5s ease;
 }
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-title {
+        width: 100%;
+    }
+
+    .header-status {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .social-icons {
+        justify-content: flex-start;
+        margin-top: 0.5rem;
+    }
+
+    .header-quarter-box {
+        min-width: 0;
+        width: 100%;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .hq-label {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .hq-text {
+        font-size: 0.75rem;
+        white-space: normal;
+        line-height: 1.2;
+    }
+}
