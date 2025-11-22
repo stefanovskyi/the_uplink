@@ -232,8 +232,7 @@ body {
 }
 
 .converter-section {
-    margin-bottom: 1.5rem;
-    /* border-bottom removed as per request */
+    margin-bottom: 0.5rem;
     padding-bottom: 0;
 }
 
@@ -467,7 +466,6 @@ body {
 
 .hour-cell.working {
     background-color: var(--c-accent-green);
-    border-color: black;
 }
 
 .hour-cell.off {
@@ -476,17 +474,14 @@ body {
 
 .hour-cell.shoulder {
     background-color: #99ff99;
-    border-color: black;
 }
 
 .hour-cell.current {
     background-color: var(--c-accent-yellow);
-    border-color: black;
 }
 
 .hour-cell.current-light {
     background-color: #fffcd6; /* Light Yellow */
-    border-color: black;
 }
 
 .weather-info {
@@ -695,7 +690,7 @@ body {
     box-shadow: var(--shadow-hard);
     padding: 1.5rem;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
 }
 
 .timeline-grid {
@@ -825,3 +820,47 @@ body {
     box-shadow: 0 0 20px var(--c-accent-green);
 }
 
+
+/* Header Quarter Box */
+.header-quarter-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: black;
+    border: 3px solid var(--c-accent-green);
+    padding: 0.25rem 1rem;
+    height: 40px;
+    min-width: 320px;
+    overflow: hidden;
+    font-family: var(--font-main);
+}
+
+.hq-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    margin-right: 1.5rem;
+    z-index: 2;
+    line-height: 1;
+}
+
+.hq-text {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    z-index: 2;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.hq-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--c-accent-green);
+    opacity: 0.3;
+    z-index: 1;
+    transition: width 0.5s ease;
+}

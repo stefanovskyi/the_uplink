@@ -262,7 +262,7 @@ document.addEventListener("alpine:init", () => {
 
   // E. Silence Killer Module
   Alpine.data("silenceKiller", () => ({
-    mode: "icebreaker",
+    mode: "trivia",
     currentText: "READY TO GENERATE...",
     icebreakers: [
       "What is the weirdest snack you have on your desk right now?",
@@ -318,7 +318,6 @@ document.addEventListener("alpine:init", () => {
       { name: "WRO (CET)", offset: 1 },
       { name: "LVI (EET)", offset: 2 },
     ],
-    optimalWindow: "CALCULATING...",
     currentUserHour: null,
     userTimeZone: 'UTC',
     userUtcOffset: 0,
@@ -403,9 +402,6 @@ document.addEventListener("alpine:init", () => {
       maxOverlap = Math.max(...overlapCounts);
       bestStartUtc = overlapCounts.indexOf(maxOverlap);
 
-      // Format
-      this.optimalWindow = `${bestStartUtc}:00 - ${bestStartUtc+1}:00 UTC`;
-      
       // Add local times for EST and CET
       const estStart = bestStartUtc - 5;
       const estEnd = bestStartUtc + 1 - 5;
@@ -418,8 +414,6 @@ document.addEventListener("alpine:init", () => {
           while (hour >= 24) hour -= 24;
           return hour;
       };
-      
-      this.optimalWindow += ` (${formatHour(estStart)}:00 - ${formatHour(estEnd)}:00 EST / ${formatHour(cetStart)}:00 - ${formatHour(cetEnd)}:00 CET)`;
     },
   }));
 
@@ -497,10 +491,11 @@ document.addEventListener("alpine:init", () => {
   }));
 
   // H. Year Timeline Module
-  Alpine.data("yearTimeline", () => ({
-    currentQuarter: 1,
+  // H. Header Quarter Module (Replaces Year Timeline)
+  Alpine.data("headerQuarter", () => ({
+    qLabel: "Q-",
+    statusText: "LOADING...",
     progress: 0,
-    statusText: "IN PROGRESS",
 
     init() {
       this.update();
@@ -513,24 +508,28 @@ document.addEventListener("alpine:init", () => {
       const year = now.getFullYear();
 
       // Determine Quarter (1-4)
-      // Q1: Jan(0)-Mar(2), Q2: Apr(3)-Jun(5), Q3: Jul(6)-Sep(8), Q4: Oct(9)-Dec(11)
-      this.currentQuarter = Math.floor(month / 3) + 1;
+      const currentQuarter = Math.floor(month / 3) + 1;
+      this.qLabel = `Q${currentQuarter}`;
 
       // Calculate Progress
-      let qStart, qEnd;
+      let qStart, qEnd, dateRange;
       
-      if (this.currentQuarter === 1) {
+      if (currentQuarter === 1) {
         qStart = new Date(year, 0, 1);
-        qEnd = new Date(year, 3, 0); // Last day of Mar
-      } else if (this.currentQuarter === 2) {
+        qEnd = new Date(year, 3, 0);
+        dateRange = "JAN-MAR";
+      } else if (currentQuarter === 2) {
         qStart = new Date(year, 3, 1);
-        qEnd = new Date(year, 6, 0); // Last day of Jun
-      } else if (this.currentQuarter === 3) {
+        qEnd = new Date(year, 6, 0);
+        dateRange = "APR-JUN";
+      } else if (currentQuarter === 3) {
         qStart = new Date(year, 6, 1);
-        qEnd = new Date(year, 9, 0); // Last day of Sep
+        qEnd = new Date(year, 9, 0);
+        dateRange = "JUL-SEP";
       } else {
         qStart = new Date(year, 9, 1);
-        qEnd = new Date(year, 12, 0); // Last day of Dec
+        qEnd = new Date(year, 12, 0);
+        dateRange = "OCT-DEC";
       }
 
       // Total days in quarter
@@ -542,21 +541,13 @@ document.addEventListener("alpine:init", () => {
       pct = Math.max(0, Math.min(100, pct)); // Clamp 0-100
       this.progress = pct.toFixed(1);
 
-      // Determine Status Text
-      // Logic: If progress > 85%, Status = "CLOSING". If < 15%, Status = "INITIATING". Else = "IN PROGRESS".
-      if (pct < 15) {
-        this.statusText = `Q${this.currentQuarter} INITIATING`;
-      } else if (pct > 85) {
-        this.statusText = `Q${this.currentQuarter} CLOSING`;
-      } else {
-        this.statusText = `Q${this.currentQuarter} IN PROGRESS`;
-      }
-    },
+      // Determine Status
+      let status = "IN PROGRESS";
+      if (pct < 15) status = "INITIATING";
+      if (pct > 85) status = "CLOSING";
 
-    getQuarterClass(q) {
-      if (q < this.currentQuarter) return 'state-past';
-      if (q > this.currentQuarter) return 'state-future';
-      return 'state-active';
+      // Format: Q4 IN PROGRESS OCT-DEC
+      this.statusText = `Q${currentQuarter} ${status} ${dateRange}`;
     }
   }));
 });

@@ -22,7 +22,13 @@
     <header class="header-container">
         <div class="header-title">
             <h1>The_Uplink</h1>
-            <div class="header-subtitle">v.1.0 // INTRO_HELPER_UTILITY</div>
+            <div class="header-subtitle" x-data="headerQuarter">
+                <div class="header-quarter-box">
+                    <div class="hq-label" x-text="qLabel">Q-</div>
+                    <div class="hq-text" x-text="statusText">LOADING...</div>
+                    <div class="hq-progress" :style="`width: ${progress}%`"></div>
+                </div>
+            </div>
         </div>
         <div class="header-status" x-data="statusModule">
             <div>DETECTED: <span x-text="userLocation">DETECTING...</span></div>
@@ -278,50 +284,9 @@
                 </template>
             </div>
         </div>
-
-        <div class="optimal-window">
-            OPTIMAL WINDOW: <span x-text="optimalWindow">CALCULATING...</span>
-        </div>
     </section>
 
-    <!-- H. Year Timeline -->
-    <section class="year-timeline" x-data="yearTimeline">
-        <div class="module-header">YEAR_TIMELINE // BUSINESS_CLOCK</div>
-        
-        <div class="timeline-grid">
-            <!-- Q1 -->
-            <div class="quarter-block" :class="getQuarterClass(1)">
-                <div class="quarter-label">Q1</div>
-                <div class="quarter-dates">JAN-MAR</div>
-                <div class="quarter-status" x-show="currentQuarter === 1" x-text="statusText"></div>
-                <div class="progress-bar" x-show="currentQuarter === 1" :style="`width: ${progress}%`"></div>
-            </div>
 
-            <!-- Q2 -->
-            <div class="quarter-block" :class="getQuarterClass(2)">
-                <div class="quarter-label">Q2</div>
-                <div class="quarter-dates">APR-JUN</div>
-                <div class="quarter-status" x-show="currentQuarter === 2" x-text="statusText"></div>
-                <div class="progress-bar" x-show="currentQuarter === 2" :style="`width: ${progress}%`"></div>
-            </div>
-
-            <!-- Q3 -->
-            <div class="quarter-block" :class="getQuarterClass(3)">
-                <div class="quarter-label">Q3</div>
-                <div class="quarter-dates">JUL-SEP</div>
-                <div class="quarter-status" x-show="currentQuarter === 3" x-text="statusText"></div>
-                <div class="progress-bar" x-show="currentQuarter === 3" :style="`width: ${progress}%`"></div>
-            </div>
-
-            <!-- Q4 -->
-            <div class="quarter-block" :class="getQuarterClass(4)">
-                <div class="quarter-label">Q4</div>
-                <div class="quarter-dates">OCT-DEC</div>
-                <div class="quarter-status" x-show="currentQuarter === 4" x-text="statusText"></div>
-                <div class="progress-bar" x-show="currentQuarter === 4" :style="`width: ${progress}%`"></div>
-            </div>
-        </div>
-    </section>
 
 
     <script src="js/app.js"></script>
