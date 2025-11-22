@@ -448,4 +448,68 @@ document.addEventListener("alpine:init", () => {
       }
     }
   }));
+
+  // H. Year Timeline Module
+  Alpine.data("yearTimeline", () => ({
+    currentQuarter: 1,
+    progress: 0,
+    statusText: "IN PROGRESS",
+
+    init() {
+      this.update();
+      setInterval(() => this.update(), 60000); // Update every minute
+    },
+
+    update() {
+      const now = new Date();
+      const month = now.getMonth(); // 0-11
+      const year = now.getFullYear();
+
+      // Determine Quarter (1-4)
+      // Q1: Jan(0)-Mar(2), Q2: Apr(3)-Jun(5), Q3: Jul(6)-Sep(8), Q4: Oct(9)-Dec(11)
+      this.currentQuarter = Math.floor(month / 3) + 1;
+
+      // Calculate Progress
+      let qStart, qEnd;
+      
+      if (this.currentQuarter === 1) {
+        qStart = new Date(year, 0, 1);
+        qEnd = new Date(year, 3, 0); // Last day of Mar
+      } else if (this.currentQuarter === 2) {
+        qStart = new Date(year, 3, 1);
+        qEnd = new Date(year, 6, 0); // Last day of Jun
+      } else if (this.currentQuarter === 3) {
+        qStart = new Date(year, 6, 1);
+        qEnd = new Date(year, 9, 0); // Last day of Sep
+      } else {
+        qStart = new Date(year, 9, 1);
+        qEnd = new Date(year, 12, 0); // Last day of Dec
+      }
+
+      // Total days in quarter
+      const totalDuration = qEnd.getTime() - qStart.getTime();
+      const elapsed = now.getTime() - qStart.getTime();
+      
+      // Calculate percentage
+      let pct = (elapsed / totalDuration) * 100;
+      pct = Math.max(0, Math.min(100, pct)); // Clamp 0-100
+      this.progress = pct.toFixed(1);
+
+      // Determine Status Text
+      // Logic: If progress > 85%, Status = "CLOSING". If < 15%, Status = "INITIATING". Else = "IN PROGRESS".
+      if (pct < 15) {
+        this.statusText = `Q${this.currentQuarter} INITIATING`;
+      } else if (pct > 85) {
+        this.statusText = `Q${this.currentQuarter} CLOSING`;
+      } else {
+        this.statusText = `Q${this.currentQuarter} IN PROGRESS`;
+      }
+    },
+
+    getQuarterClass(q) {
+      if (q < this.currentQuarter) return 'state-past';
+      if (q > this.currentQuarter) return 'state-future';
+      return 'state-active';
+    }
+  }));
 });

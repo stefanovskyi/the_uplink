@@ -668,3 +668,141 @@ body {
 .status-message.error {
     color: #dc2626;
 }
+
+/* H. Year Timeline */
+.year-timeline {
+    background: var(--c-card);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-hard);
+    padding: 1.5rem;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .timeline-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px; /* Thick black gaps */
+    }
+}
+
+.quarter-block {
+    position: relative;
+    height: 50px;
+    border: 2px solid black;
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.quarter-label {
+    font-size: 1.25rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.quarter-dates {
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.quarter-status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+}
+
+/* States */
+.state-past {
+    background-color: #333333;
+    color: #555555;
+    border-color: #555555;
+    background-image: repeating-linear-gradient(
+        45deg,
+        #333,
+        #333 10px,
+        #222 10px,
+        #222 20px
+    );
+}
+
+.state-future {
+    background-color: transparent;
+    border: 2px dashed #ffffff;
+    color: white;
+    text-shadow: 
+        -1px -1px 0 #000,  
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000; /* Outline effect for visibility on scanline bg if transparent */
+}
+
+/* Ensure future text is visible against the card background */
+.year-timeline .state-future {
+    color: #000; /* Reset to black since it's inside a white card */
+    border: 2px dashed #000;
+    text-shadow: none;
+    opacity: 0.5;
+}
+
+.state-active {
+    background-color: #000000;
+    color: #ffffff;
+    border: 3px solid var(--c-accent-green);
+}
+
+.state-active .quarter-label,
+.state-active .quarter-dates,
+.state-active .quarter-status {
+    color: #ffffff;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--c-accent-green);
+    opacity: 0.2;
+    box-shadow: 0 0 10px var(--c-accent-green);
+    z-index: 1;
+    transition: width 1s linear;
+}
+
+/* Thin line progress bar style override if preferred, but user asked for "internal progress bar" which usually implies filling. 
+   User said: "Inside the ACTIVE block, a solid #00FF00 bar fills from left to right."
+   Let's make it a bottom bar or a fill? "fills from left to right" implies a fill.
+   Let's stick to a fill but maybe not full height to keep text readable? 
+   Or full height with low opacity? 
+   User said: "It must have a "glow" effect".
+   Let's try a full height bar but with low opacity (0.2) so text is readable, 
+   OR a thin line at the bottom.
+   "Update the width style of the internal progress bar".
+   Let's go with a substantial bar at the bottom, say 10px, or full background fill.
+   "solid #00FF00 bar fills".
+   Let's do a full height background fill with opacity to simulate "filling the block".
+*/
+.state-active .progress-bar {
+    opacity: 0.3;
+    background: var(--c-accent-green);
+    box-shadow: 0 0 20px var(--c-accent-green);
+}
+
