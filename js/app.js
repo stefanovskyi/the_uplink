@@ -64,6 +64,7 @@ document.addEventListener("alpine:init", () => {
     isUser: false,
     lat: 0,
     lon: 0,
+    isAlertMode: false,
 
     init() {
       this.checkIfUser();
@@ -75,6 +76,11 @@ document.addEventListener("alpine:init", () => {
       this.$watch("$store.global.tempUnit", (val) => {
         this.updateTempDisplay(val);
       });
+
+      if (cityCode === 'LVI') {
+          this.checkAirAlert();
+          setInterval(() => this.checkAirAlert(), 30000); // Check every 30s
+      }
     },
 
     checkIfUser() {
@@ -120,8 +126,10 @@ document.addEventListener("alpine:init", () => {
         this.rawTempC = data.current_weather.temperature;
         this.weatherCode = data.current_weather.weathercode;
 
-        this.updateWeatherDesc(this.weatherCode);
-        this.updateTempDisplay(Alpine.store("global").tempUnit);
+        if (!this.isAlertMode) {
+            this.updateWeatherDesc(this.weatherCode);
+            this.updateTempDisplay(Alpine.store("global").tempUnit);
+        }
       } catch (e) {
         this.weatherDesc = "ERR";
         console.error(`Weather Error ${cityCode}:`, e);
@@ -138,8 +146,12 @@ document.addEventListener("alpine:init", () => {
         rain: `<svg viewBox="0 0 24 24"><path d="M16 13v8M8 13v8M12 15v8M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`,
         snow: `<svg viewBox="0 0 24 24"><path d="M8 15l2 2m0-2l-2 2m8-2l2 2m0-2l-2 2m-6-8l2 2m0-2l-2 2m8-2l2 2m0-2l-2 2"></path><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path></svg>`,
         thunder: `<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>`,
-        unknown: `<svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`
+        unknown: `<svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+        rocket: `<svg viewBox="0 0 24 24" style="stroke: #ff3333;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15a6 6 0 1 0-6-6c0 3.31 6 12 6 12s6-8.69 6-12a6 6 0 1 0-6-6"></path><path d="M12 15L9 9l3 6 3-6-3 6z" fill="currentColor"></path><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm0 2a8 8 0 0 0-8 8c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" opacity="0"></path><path d="M12 2C9 2 7 5 7 8s3 11 5 13c2-2 5-10 5-13s-2-6-5-6zm0 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>`
       };
+
+      // Rocket Icon (Custom Red) - Simplified Rocket Shape
+      icons.rocket = `<svg viewBox="0 0 24 24" fill="none" class="rocket-icon" style="stroke: #ff3333 !important;" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>`;
 
       // Simple WMO code mapping
       const codes = {
@@ -159,6 +171,7 @@ document.addEventListener("alpine:init", () => {
         73: { desc: "SNOW", icon: icons.snow },
         75: { desc: "HEAVY SNOW", icon: icons.snow },
         95: { desc: "THUNDERSTORM", icon: icons.thunder },
+        999: { desc: "AIR ALERT", icon: icons.rocket },
       };
       const weather = codes[code] || { desc: "UNKNOWN", icon: icons.unknown };
       this.weatherDesc = weather.desc;
@@ -194,6 +207,32 @@ document.addEventListener("alpine:init", () => {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.1);
+    },
+
+    async checkAirAlert() {
+        try {
+            const res = await fetch("https://siren.pp.ua/api/v3/alerts");
+            const data = await res.json();
+            // Check specifically for "Luhanska region"
+            const luhanska = data.find(r => r.regionEngName === "Luhanska region");
+            const isAlert = luhanska && luhanska.activeAlerts && luhanska.activeAlerts.length > 0;
+
+            if (isAlert) {
+                this.isAlertMode = true;
+                this.updateWeatherDesc(999); // 999 = Air Alert
+                this.temp = "";
+                this.unit = "";
+            } else {
+                if (this.isAlertMode) {
+                    // Alert just ended
+                    this.isAlertMode = false;
+                    this.updateWeatherDesc(this.weatherCode);
+                    this.updateTempDisplay(Alpine.store("global").tempUnit);
+                }
+            }
+        } catch (e) {
+            console.error("Air Alert Check Error:", e);
+        }
     },
   }));
 
