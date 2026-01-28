@@ -77,9 +77,10 @@ document.addEventListener("alpine:init", () => {
         this.updateTempDisplay(val);
       });
 
+      // Lviv - Check immediately then every 5 minutes
       if (cityCode === 'LVI') {
           this.checkAirAlert();
-          setInterval(() => this.checkAirAlert(), 30000); // Check every 30s
+          setInterval(() => this.checkAirAlert(), 300000);
       }
     },
 
@@ -213,11 +214,15 @@ document.addEventListener("alpine:init", () => {
         try {
             const res = await fetch("https://siren.pp.ua/api/v3/alerts");
             const data = await res.json();
-            // Check specifically for "Luhanska region"
-            const luhanska = data.find(r => r.regionEngName === "Luhanska region");
-            const isAlert = luhanska && luhanska.activeAlerts && luhanska.activeAlerts.length > 0;
+            
+            const isLvivAlert = data.some(
+                (region) =>
+                    region.regionName.includes("Lviv") &&
+                    region.activeAlerts &&
+                    region.activeAlerts.some((alert) => alert.type === "AIR_ALARM")
+            );
 
-            if (isAlert) {
+            if (isLvivAlert) {
                 this.isAlertMode = true;
                 this.updateWeatherDesc(999); // 999 = Air Alert
                 this.temp = "";
