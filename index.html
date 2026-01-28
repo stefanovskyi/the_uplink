@@ -254,12 +254,7 @@
         <div class="gantt-container">
             <div class="gantt-chart">
                 <!-- X-Axis -->
-                <div class="gantt-row header-row">
-                    <div class="row-label" x-text="userTimeZone">UTC</div>
-                    <template x-for="h in 24">
-                        <div class="hour-cell" x-text="h-1"></div>
-                    </template>
-                </div>
+
 
                 <!-- Rows -->
                 <template x-for="city in cities">
@@ -267,7 +262,8 @@
                         <div class="row-label" x-text="city.name"></div>
                         <template x-for="h in 24">
                             <div class="hour-cell" 
-                                 :class="getHourStatus(city.offset, h-1)">
+                                 :class="getHourStatus(city.offset, h-1)"
+                                 x-text="getFormattedHour(city.offset, h-1)">
                             </div>
                         </template>
                     </div>

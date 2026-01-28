@@ -316,10 +316,10 @@ document.addEventListener("alpine:init", () => {
   // F. Overlap Visualizer Module
   Alpine.data("overlapVisualizer", () => ({
     cities: [
-      { name: "LAX (PST)", offset: -8 }, // Standard time, simplified
-      { name: "NYC (EST)", offset: -5 },
-      { name: "WRO (CET)", offset: 1 },
-      { name: "LVI (EET)", offset: 2 },
+      { name: "PST", offset: -8 }, // Standard time, simplified
+      { name: "EST", offset: -5 },
+      { name: "CET", offset: 1 },
+      { name: "EET", offset: 2 },
     ],
     currentUserHour: null,
     userTimeZone: 'UTC',
@@ -373,6 +373,15 @@ document.addEventListener("alpine:init", () => {
       if (cityHour >= 9 && cityHour < 18) return 'working';
       if (cityHour === 8 || cityHour === 18) return 'shoulder';
       return 'off';
+    },
+
+    getFormattedHour(cityUtcOffset, axisHour) {
+        const startHour = this.getCityHour(axisHour, cityUtcOffset);
+        let endHour = startHour + 1;
+        if (endHour >= 24) endHour = 0;
+        
+        // Format as "11-12"
+        return `${startHour}-${endHour}`;
     },
 
     calculateWindow() {
