@@ -308,8 +308,18 @@ document.addEventListener("alpine:init", () => {
     generate() {
       const source =
         this.mode === "icebreaker" ? this.icebreakers : this.trivia;
-      const random = source[Math.floor(Math.random() * source.length)];
+      
+      let random;
+      // Ensure we don't repeat the same text immediately
+      do {
+          random = source[Math.floor(Math.random() * source.length)];
+      } while (random === this.currentText && source.length > 1);
+
       this.currentText = random;
+    },
+    setMode(newMode) {
+        this.mode = newMode;
+        this.generate();
     }
   }));
 

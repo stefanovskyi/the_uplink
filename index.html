@@ -230,9 +230,9 @@
             <div class="module-header">
                 <span>SILENCE_KILLER_V2</span>
                 <div class="mode-toggles-inline">
-                    <button @click="mode = 'icebreaker'" :class="{'active': mode === 'icebreaker'}">ICEBREAKER</button>
+                    <button @click="setMode('icebreaker')" :class="{'active': mode === 'icebreaker'}">ICEBREAKER</button>
                     <span>/</span>
-                    <button @click="mode = 'trivia'" :class="{'active': mode === 'trivia'}">TRIVIA</button>
+                    <button @click="setMode('trivia')" :class="{'active': mode === 'trivia'}">TRIVIA</button>
                 </div>
             </div>
             <div class="display-area">
