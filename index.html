@@ -258,7 +258,7 @@
 
                 <!-- Rows -->
                 <template x-for="city in cities">
-                    <div class="gantt-row">
+                    <div class="gantt-row" :class="{'user-match': city.offset === userUtcOffset}">
                         <div class="row-label" x-text="city.name"></div>
                         <template x-for="h in 24">
                             <div class="hour-cell" 

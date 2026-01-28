@@ -526,6 +526,13 @@ body {
   background-color: #fffcd6; /* Light Yellow */
 }
 
+/* User Match Highlight */
+.gantt-row.user-match .hour-cell {
+  box-shadow: inset 0 0 0 100px rgba(0, 0, 0, 0.35);
+  color: white;
+  text-shadow: 1px 1px 0 black;
+}
+
 .weather-info {
   display: flex;
   flex-direction: column;
