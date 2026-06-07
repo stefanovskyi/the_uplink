@@ -60,6 +60,44 @@ body {
 .header-status {
   text-align: right;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.support-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--c-accent-yellow);
+  border: 2px solid black;
+  color: black;
+  font-weight: bold;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 3px 3px 0px black;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  transition: all 0.1s;
+  margin-bottom: 0.5rem;
+}
+
+.support-btn svg {
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.support-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px black;
+  background: var(--c-accent-pink);
+}
+
+.support-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
 
 .header-status p {
@@ -940,9 +978,11 @@ body {
   .header-status {
     width: 100%;
     text-align: left;
-    display: flex;
-    flex-direction: column;
     align-items: flex-start;
+  }
+
+  .support-btn {
+    align-self: flex-start;
   }
 
   .social-icons {
